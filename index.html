@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Save time to 
+      <span class="txt-type" data-wait="30" data-words='["identify your next funding opportunity.", 
+      "identify approachable investors for your idea.", 
+      "bring an idea from concept to reality.", "find the right talent for your client.", 
+      "do due diligence before a build/buy/partner decision."]'></span>
+    </h1>
+  </div>
+  
+  <script>
+    const TypeWriter = function(txtElement, words, wait) {
+        this.txtElement = txtElement;
+        this.words = words;
+        this.txt = '';
+        this.wordIndex = 0;
+        this.wait = wait;
+        this.type();
+        this.isDeleting = false;
+        }
+
+    // Type Method
+    TypeWriter.prototype.type = function() {
+        // Current index of word
+        const current = this.wordIndex % this.words.length;
+       	// Get full text of current word
+       	const fullTxt = this.words[current];
+
+       	// Check if deleting
+        if(this.isDeleting) {
+            // Remove char
+            this.txt = fullTxt.substring(0, this.txt.length - 1);
+        } else {
+            // Add char
+            this.txt = fullTxt.substring(0, this.txt.length + 1);
+        }
+
+       	// Insert txt into element
+        this.txtElement.innerHTML = `<span class="txt">${this.txt}</span>`;
+        
+        
+        // Initial Type Speed
+        let typeSpeed = 30;
+
+        if(this.isDeleting) {
+            typeSpeed = 30;
+        }
+
+        // If word is complete
+        if(!this.isDeleting && this.txt === fullTxt) {
+           // Make pause at end
+            typeSpeed = this.wait;
+            // Set delete to true
+            this.isDeleting = true;
+        } else if(this.isDeleting && this.txt === '') {
+            this.isDeleting = false;
+            // Move to next word
+            this.wordIndex++;
+            // Pause before start typing
+            typeSpeed = 30;
+        }
+        // use of arrow function
+        setTimeout(() => this.type(), typeSpeed);
+    }
+
+
+    // Init On DOM Load
+    document.addEventListener('DOMContentLoaded', init);
+    document.querySelector('.txt-type').style.color = '#6ec1e4';
+    document.querySelector('.container').style.fontFamily = "Roboto,sans-serif";
+    document.querySelector('.container').style.fontWeight = "600";
+    document.querySelector('.container').style.fontSize = "40px";
+    document.querySelector('.container').style.textAlign = "center";
+    // Init App
+    function init() {
+        const txtElement = document.querySelector('.txt-type');
+        const words = JSON.parse(txtElement.getAttribute('data-words'));
+        const wait = txtElement.getAttribute('data-wait');
+       
+        // Init TypeWriter
+        new TypeWriter(txtElement, words, wait);
+    }
+  
+  </script>
+</body>
+</html>
